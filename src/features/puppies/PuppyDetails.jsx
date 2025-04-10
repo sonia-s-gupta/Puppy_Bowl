@@ -1,3 +1,5 @@
+import { useGetPuppyQuery, useDeletePuppyMutation } from "./puppySlice";
+
 /**
  * @component
  * Shows comprehensive information about the selected puppy, if there is one.
@@ -5,12 +7,17 @@
  */
 export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
   // TODO: Grab data from the `getPuppy` query
+  const { data, error, isLoading} = useGetPuppyQuery(selectedPuppyId); // This will return the puppy data
 
   // TODO: Use the `deletePuppy` mutation to remove a puppy when the button is clicked
+  const [deletePuppy] = useDeletePuppyMutation(); 
 
-  function removePuppy(id) {
-    setSelectedPuppyId();
+  async function removePuppy(id) {
+    await deletePuppy(id); // This will remove the puppy from the roster
+    setSelectedPuppyId(null); // This will clear the selected puppy
   }
+
+  const puppy = data?.data?.player; 
 
   // There are 3 possibilities:
   let $details;
@@ -23,7 +30,7 @@ export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
     $details = <p>Loading puppy information...</p>;
   }
   // 3. Information about the selected puppy has returned from the API.
-  else {
+  else if (puppy) {
     $details = (
       <>
         <h3>
@@ -39,6 +46,8 @@ export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
         </figure>
       </>
     );
+  } else if (error) {
+    $details = <p>Failed to load puppy information</p>;
   }
 
   return (
