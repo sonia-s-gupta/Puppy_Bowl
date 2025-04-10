@@ -12,11 +12,26 @@ export default function PuppyForm() {
 
   // TODO: Use the `addPuppy` mutation to add a puppy when the form is submitted
 
-  function postPuppy(event) {
+  async function postPuppy(event) {
     event.preventDefault();
 
     // Placeholder image w/ random photos of dogs
-    const imageUrl = "https://loremflickr.com/200/300/dog";
+    const imageUrl = "https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Z29sZGVuJTIwcmV0cmlldmVyfGVufDB8fDB8fHww";
+
+    const newPuppy = {
+      name: name,
+      breed: breed,
+      status: "bench",
+      imageUrl: imageUrl,
+    };
+
+    try {
+      await addPuppy(newPuppy).unwrap(); // This will add the puppy to the roster
+      setName(""); // Clear the name input
+      setBreed(""); // Clear the breed input
+    } catch (error) {
+      console.error("Failed to add puppy: ", error);
+    }
   }
 
   return (
